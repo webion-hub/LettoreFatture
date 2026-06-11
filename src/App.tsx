@@ -210,9 +210,9 @@ function PendingList({
   return (
     <section>
       <div className="mb-3 flex items-baseline justify-between">
-        <h2 className="text-sm font-semibold text-foreground">
+        <span className="text-xs text-muted-foreground">
           Fatture da controllare
-        </h2>
+        </span>
         <span className="text-xs text-muted-foreground tabular-nums">
           {emails.length} in attesa
         </span>
@@ -225,9 +225,6 @@ function PendingList({
       ) : (
         <div className="space-y-3">
           {emails.map((e, i) => {
-            const low = Object.values(e.extracted.confidence).some(
-              (c) => (c ?? 1) < 0.85
-            );
             const isNew = justAdded.includes(e.id);
             return (
               <motion.div
@@ -238,15 +235,12 @@ function PendingList({
               >
                 <Card
                   className={cn(
-                    "flex flex-col gap-4 p-4 transition-colors hover:border-primary/40 sm:flex-row sm:items-center sm:justify-between",
+                    "flex flex-col gap-4 rounded-2xl p-4 transition-colors hover:border-primary/40 sm:flex-row sm:items-center sm:justify-between",
                     isNew && "border-primary/50 bg-accent/40"
                   )}
                 >
                   <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <p className="truncate font-medium">{e.from}</p>
-                      {low && <Badge variant="warning">da verificare</Badge>}
-                    </div>
+                    <p className="truncate font-medium">{e.from}</p>
                     <p className="mt-0.5 truncate text-sm text-muted-foreground">
                       {e.subject}
                     </p>
@@ -258,7 +252,7 @@ function PendingList({
                   <div className="shrink-0 sm:pl-4">
                     <Button
                       onClick={() => onProcess(e)}
-                      className="w-full sm:w-auto"
+                      className="w-full rounded-xl bg-accent text-accent-foreground hover:bg-primary/20 sm:w-auto"
                     >
                       Controlla
                     </Button>
