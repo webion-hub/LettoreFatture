@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { DotBackground } from "@/components/DotBackground";
 import { ProcessingOverlay } from "@/components/ProcessingOverlay";
 import { ExtractionPanel } from "@/components/ExtractionPanel";
 import { UploadZone } from "@/components/UploadZone";
@@ -70,6 +71,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen">
+      <DotBackground />
       <main className="mx-auto max-w-5xl px-4 pb-20 pt-8 sm:pt-12">
         {/* ===== Segmented slider ===== */}
         <div className="flex justify-center">
