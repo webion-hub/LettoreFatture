@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DotBackground } from "@/components/DotBackground";
+import { Header } from "@/components/Header";
+import { LoginPage } from "@/components/LoginPage";
 import { ProcessingOverlay } from "@/components/ProcessingOverlay";
 import { ExtractionPanel } from "@/components/ExtractionPanel";
 import { UploadZone } from "@/components/UploadZone";
@@ -19,8 +21,11 @@ import { cn, formatCurrency, formatDate } from "@/lib/utils";
 type View = "home" | "gestionale";
 
 const APP_NAME = "Quadra";
+const USER_NAME = "Alessandro Piscitiello";
+const USER_EMAIL = "alessandro.piscitiello@webion.com";
 
 export default function App() {
+  const [authed, setAuthed] = useState(true);
   const [view, setView] = useState<View>("home");
   const [emails, setEmails] = useState<InvoiceEmail[]>(initialEmails);
   const [registered, setRegistered] =
@@ -69,9 +74,27 @@ export default function App() {
     setView("gestionale");
   };
 
+  if (!authed) {
+    return (
+      <div className="min-h-screen">
+        <DotBackground />
+        <LoginPage
+          appName={APP_NAME}
+          defaultEmail={USER_EMAIL}
+          onLogin={() => setAuthed(true)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen">
       <DotBackground />
+      <Header
+        userName={USER_NAME}
+        userEmail={USER_EMAIL}
+        onLogout={() => setAuthed(false)}
+      />
       <main className="mx-auto max-w-5xl px-4 pb-20 pt-8 sm:pt-12">
         {/* ===== Segmented slider ===== */}
         <div className="flex justify-center">
