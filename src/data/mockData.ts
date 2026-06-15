@@ -6,15 +6,25 @@ export interface LineItem {
 }
 
 export interface ExtractedData {
-  supplier: string;
+  // --- Fornitore (cedente/prestatore) ---
+  supplier: string; // ragione sociale
   vatNumber: string; // Partita IVA
-  invoiceNumber: string;
-  invoiceDate: string; // ISO
-  dueDate: string; // ISO scadenza
+  taxCode: string; // Codice fiscale
+  address: string; // sede / indirizzo
+  // --- Documento ---
+  documentType: string; // tipo documento, es. "TD01 - fattura"
+  invoiceNumber: string; // numero documento
+  invoiceDate: string; // ISO — data documento
+  dueDate: string; // ISO — data scadenza
+  recipientCode: string; // codice destinatario (SDI)
+  description: string; // causale
+  // --- Importi ---
   taxableAmount: number; // imponibile
   vatRate: number; // aliquota IVA %
   vatAmount: number; // importo IVA
-  total: number; // totale
+  total: number; // totale documento
+  // --- Pagamento ---
+  paymentMethod: string; // modalità di pagamento, es. "MP19 - SEPA Direct Debit"
   /** confidenza per campo (0-1) — i campi sotto soglia vengono segnalati */
   confidence: Partial<Record<keyof ExtractedData, number>>;
 }
@@ -35,13 +45,19 @@ const makeConfidence = (
 ): ExtractedData["confidence"] => ({
   supplier: 0.99,
   vatNumber: 0.98,
+  taxCode: 0.98,
+  address: 0.95,
+  documentType: 0.99,
   invoiceNumber: 0.97,
   invoiceDate: 0.99,
   dueDate: 0.98,
+  recipientCode: 0.96,
+  description: 0.93,
   taxableAmount: 0.99,
   vatRate: 0.99,
   vatAmount: 0.99,
   total: 0.99,
+  paymentMethod: 0.95,
   ...overrides,
 });
 
@@ -57,13 +73,19 @@ export const initialEmails: InvoiceEmail[] = [
     extracted: {
       supplier: "Tecnoforniture S.r.l.",
       vatNumber: "IT04567890123",
+      taxCode: "04567890123",
+      address: "Via dell'Industria 12, Bologna (BO), 40139 IT",
+      documentType: "TD01 - fattura",
       invoiceNumber: "2026/0457",
       invoiceDate: "2026-06-05",
       dueDate: "2026-07-05",
+      recipientCode: "SUBM70N",
+      description: "Forniture materiale tecnico - ordine n. 318",
       taxableAmount: 2450.0,
       vatRate: 22,
       vatAmount: 539.0,
       total: 2989.0,
+      paymentMethod: "MP05 - Bonifico",
       confidence: makeConfidence(),
     },
   },
@@ -78,13 +100,19 @@ export const initialEmails: InvoiceEmail[] = [
     extracted: {
       supplier: "Energia Più S.p.A.",
       vatNumber: "IT09887766554",
+      taxCode: "09887766554",
+      address: "Viale Roma 200, Milano (MI), 20121 IT",
+      documentType: "TD01 - fattura",
       invoiceNumber: "EP-2026-118923",
       invoiceDate: "2026-06-03",
       dueDate: "2026-06-28",
+      recipientCode: "0000000",
+      description: "Fornitura energia elettrica - periodo Maggio 2026",
       taxableAmount: 612.3,
       vatRate: 10,
       vatAmount: 61.23,
       total: 673.53,
+      paymentMethod: "MP19 - SEPA Direct Debit",
       // la scadenza è stampata male sul PDF → bassa confidenza, va rivista
       confidence: makeConfidence({ dueDate: 0.58, invoiceNumber: 0.71 }),
     },
@@ -100,14 +128,20 @@ export const initialEmails: InvoiceEmail[] = [
     extracted: {
       supplier: "Studio Legale Bianchi & Associati",
       vatNumber: "IT01234567890",
+      taxCode: "01234567890",
+      address: "Corso Vittorio Emanuele 5, Torino (TO), 10128 IT",
+      documentType: "TD06 - parcella",
       invoiceNumber: "45/PA",
       invoiceDate: "2026-06-01",
       dueDate: "2026-07-15",
+      recipientCode: "KRRH6B9",
+      description: "Prestazioni professionali Q2 2026",
       taxableAmount: 3500.0,
       vatRate: 22,
       vatAmount: 770.0,
       total: 4270.0,
-      confidence: makeConfidence({ supplier: 0.82 }),
+      paymentMethod: "MP05 - Bonifico",
+      confidence: makeConfidence({ supplier: 0.82, address: 0.79 }),
     },
   },
   {
@@ -121,13 +155,19 @@ export const initialEmails: InvoiceEmail[] = [
     extracted: {
       supplier: "CloudHost Italia",
       vatNumber: "IT07778889990",
+      taxCode: "07778889990",
+      address: "Via Tiburtina 1020, Roma (RM), 00156 IT",
+      documentType: "TD01 - fattura",
       invoiceNumber: "INV-90233",
       invoiceDate: "2026-05-31",
       dueDate: "2026-06-30",
+      recipientCode: "USAL8PV",
+      description: "Servizi cloud e hosting - Maggio 2026",
       taxableAmount: 189.9,
       vatRate: 22,
       vatAmount: 41.78,
       total: 231.68,
+      paymentMethod: "MP08 - Carta di pagamento",
       confidence: makeConfidence(),
     },
   },
@@ -140,15 +180,47 @@ export const initialEmails: InvoiceEmail[] = [
  * ============================================================ */
 
 const SUPPLIER_POOL = [
-  { name: "Forniture Industriali Verdi S.r.l.", vat: "IT05512348890" },
-  { name: "Digital Solutions S.p.A.", vat: "IT08891234560" },
-  { name: "Logistica Meridiana S.r.l.", vat: "IT04432198870" },
-  { name: "Officine Meccaniche Galli", vat: "IT02239988110" },
-  { name: "Marketing Lab S.r.l.s.", vat: "IT09987001230" },
-  { name: "Acqua & Servizi S.p.A.", vat: "IT01122334450" },
+  {
+    name: "Forniture Industriali Verdi S.r.l.",
+    vat: "IT05512348890",
+    address: "Via Emilia 88, Reggio Emilia (RE), 42121 IT",
+  },
+  {
+    name: "Digital Solutions S.p.A.",
+    vat: "IT08891234560",
+    address: "Piazza San Babila 3, Milano (MI), 20122 IT",
+  },
+  {
+    name: "Logistica Meridiana S.r.l.",
+    vat: "IT04432198870",
+    address: "Via del Porto 45, Napoli (NA), 80133 IT",
+  },
+  {
+    name: "Officine Meccaniche Galli",
+    vat: "IT02239988110",
+    address: "Via Artigiani 9, Brescia (BS), 25125 IT",
+  },
+  {
+    name: "Marketing Lab S.r.l.s.",
+    vat: "IT09987001230",
+    address: "Corso Italia 110, Firenze (FI), 50123 IT",
+  },
+  {
+    name: "Acqua & Servizi S.p.A.",
+    vat: "IT01122334450",
+    address: "Viale Adriatico 7, Pescara (PE), 65126 IT",
+  },
 ];
 
 const VAT_RATES = [22, 10, 4];
+
+const PAYMENT_METHODS = [
+  "MP05 - Bonifico",
+  "MP19 - SEPA Direct Debit",
+  "MP08 - Carta di pagamento",
+];
+
+const RECIPIENT_CODES = ["SUBM70N", "KRRH6B9", "USAL8PV", "0000000"];
 
 let uploadSeq = 0;
 
@@ -197,10 +269,11 @@ export function createInvoiceFromFile(
   const dueDate = addDays(invoiceDate, 30);
 
   // Su alcuni file simuliamo un riconoscimento incerto, per mostrare
-  // la verifica manuale: ~45% scadenza, ~30% partita IVA.
+  // la verifica manuale: ~45% scadenza, ~30% partita IVA, ~35% causale.
   const lowConf: Partial<Record<keyof ExtractedData, number>> = {};
   if (Math.random() < 0.45) lowConf.dueDate = 0.61;
   if (Math.random() < 0.3) lowConf.vatNumber = 0.7;
+  if (Math.random() < 0.35) lowConf.description = 0.64;
   if (!nameHint) lowConf.supplier = 0.74;
 
   return {
@@ -217,15 +290,24 @@ export function createInvoiceFromFile(
     extracted: {
       supplier: nameHint ?? pickedSupplier.name,
       vatNumber: pickedSupplier.vat,
+      taxCode: pickedSupplier.vat.replace(/^IT/, ""),
+      address: pickedSupplier.address,
+      documentType: "TD01 - fattura",
       invoiceNumber: `${new Date(today).getFullYear()}/${pad(
         100 + uploadSeq * 13
       )}`,
       invoiceDate,
       dueDate,
+      recipientCode: RECIPIENT_CODES[uploadSeq % RECIPIENT_CODES.length],
+      description: `Fornitura di beni e servizi - ${fileName.replace(
+        /\.[^.]+$/,
+        ""
+      )}`,
       taxableAmount,
       vatRate,
       vatAmount,
       total,
+      paymentMethod: PAYMENT_METHODS[uploadSeq % PAYMENT_METHODS.length],
       confidence: makeConfidence(lowConf),
     },
   };
@@ -244,13 +326,19 @@ export const seededRegistered: InvoiceEmail[] = [
     extracted: {
       supplier: "Cancelleria Rossi",
       vatNumber: "IT03219876540",
+      taxCode: "03219876540",
+      address: "Via Mazzini 23, Modena (MO), 41121 IT",
+      documentType: "TD01 - fattura",
       invoiceNumber: "312",
       invoiceDate: "2026-06-02",
       dueDate: "2026-07-02",
+      recipientCode: "M5UXCR1",
+      description: "Materiale di cancelleria per ufficio",
       taxableAmount: 145.5,
       vatRate: 22,
       vatAmount: 32.01,
       total: 177.51,
+      paymentMethod: "MP05 - Bonifico",
       confidence: makeConfidence(),
     },
   },

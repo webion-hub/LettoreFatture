@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, LogOut, Settings, User } from "lucide-react";
+import { ChevronDown, Info, LogOut, Settings, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -20,7 +20,8 @@ export function Header({ userName, userEmail, onLogout }: Props) {
     .toUpperCase();
 
   return (
-    <div className="fixed right-4 top-4 z-30">
+    <div className="fixed right-4 top-4 z-30 flex items-center gap-2">
+      <InfoChip />
       <div className="relative">
         <button
           onClick={() => setOpen((o) => !o)}
@@ -89,6 +90,43 @@ export function Header({ userName, userEmail, onLogout }: Props) {
           )}
         </AnimatePresence>
       </div>
+    </div>
+  );
+}
+
+function InfoChip() {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <div
+      className="relative"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <a
+        href="https://webion.com/en/contact-us"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-1.5 rounded-full border bg-card py-1.5 pl-2.5 pr-3 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-secondary"
+      >
+        <Info className="h-4 w-4 text-muted-foreground" />
+        Maggiori informazioni
+      </a>
+
+      <AnimatePresence>
+        {hovered && (
+          <motion.div
+            role="tooltip"
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.15 }}
+            className="absolute right-0 top-[calc(100%+0.5rem)] z-50 w-56 rounded-lg border bg-card px-3 py-2 text-xs text-muted-foreground shadow-lg"
+          >
+            Vuoi più informazioni sulla demo? Invia una mail
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
