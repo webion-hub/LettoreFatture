@@ -114,16 +114,36 @@ export function ExtractionPanel({ email, onClose, onConfirm }: Props) {
                 onChange={(v) => update("vatNumber", v)}
               />
               <Field
+                label="Codice fiscale"
+                low={isLow("taxCode")}
+                value={data.taxCode}
+                onChange={(v) => update("taxCode", v)}
+              />
+            </div>
+            <Field
+              label="Sede / indirizzo"
+              low={isLow("address")}
+              value={data.address}
+              onChange={(v) => update("address", v)}
+            />
+          </section>
+
+          <section className="space-y-3">
+            <h3 className="text-sm font-semibold text-foreground">Documento</h3>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <Field
+                label="Tipo documento"
+                low={isLow("documentType")}
+                value={data.documentType}
+                onChange={(v) => update("documentType", v)}
+              />
+              <Field
                 label="Numero fattura"
                 low={isLow("invoiceNumber")}
                 value={data.invoiceNumber}
                 onChange={(v) => update("invoiceNumber", v)}
               />
             </div>
-          </section>
-
-          <section className="space-y-3">
-            <h3 className="text-sm font-semibold text-foreground">Date</h3>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <Field
                 label="Data fattura"
@@ -140,6 +160,18 @@ export function ExtractionPanel({ email, onClose, onConfirm }: Props) {
                 onChange={(v) => update("dueDate", v)}
               />
             </div>
+            <Field
+              label="Codice destinatario (SDI)"
+              low={isLow("recipientCode")}
+              value={data.recipientCode}
+              onChange={(v) => update("recipientCode", v)}
+            />
+            <Field
+              label="Causale"
+              low={isLow("description")}
+              value={data.description}
+              onChange={(v) => update("description", v)}
+            />
           </section>
 
           <section className="space-y-3">
@@ -200,6 +232,16 @@ export function ExtractionPanel({ email, onClose, onConfirm }: Props) {
                 </>
               )}
             </div>
+          </section>
+
+          <section className="space-y-3">
+            <h3 className="text-sm font-semibold text-foreground">Pagamento</h3>
+            <Field
+              label="Modalità di pagamento"
+              low={isLow("paymentMethod")}
+              value={data.paymentMethod}
+              onChange={(v) => update("paymentMethod", v)}
+            />
           </section>
         </div>
 
