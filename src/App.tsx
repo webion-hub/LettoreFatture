@@ -21,8 +21,8 @@ import { cn, formatCurrency, formatDate } from "@/lib/utils";
 type View = "home" | "gestionale";
 
 const APP_NAME = "Quadra";
-const USER_NAME = "Alessandro Piscitiello";
-const USER_EMAIL = "alessandro.piscitiello@webion.com";
+const USER_NAME = "Mario Rossi";
+const USER_EMAIL = "mariorossi@gmail.com";
 
 export default function App() {
   const [authed, setAuthed] = useState(true);
