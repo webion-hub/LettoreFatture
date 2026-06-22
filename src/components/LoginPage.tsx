@@ -4,6 +4,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Logo } from "@/components/Logo";
 
 interface Props {
   appName: string;
@@ -31,6 +32,7 @@ export function LoginPage({ appName, defaultEmail, onLogin }: Props) {
       >
         {/* brand */}
         <div className="mb-8 flex flex-col items-center text-center">
+          <Logo className="mb-4 h-12 w-12" />
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">
             Accedi a {appName}
           </h1>
