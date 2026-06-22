@@ -151,7 +151,7 @@ function MenuItem({
         "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors",
         disabled
           ? "cursor-not-allowed text-muted-foreground/50"
-          : "text-foreground hover:bg-secondary"
+          : "text-foreground hover:bg-[hsl(210_28%_91%)]"
       )}
     >
       <Icon className="h-4 w-4" />
