@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   createInvoiceFromFile,
@@ -12,6 +12,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DotBackground } from "@/components/DotBackground";
 import { Header } from "@/components/Header";
+import { Logo } from "@/components/Logo";
 import { LoginPage } from "@/components/LoginPage";
 import { ProcessingOverlay } from "@/components/ProcessingOverlay";
 import { ExtractionPanel } from "@/components/ExtractionPanel";
@@ -26,7 +27,13 @@ const USER_EMAIL = "mariorossi@gmail.com";
 
 export default function App() {
   const [authed, setAuthed] = useState(true);
+  const [intro, setIntro] = useState(true);
   const [view, setView] = useState<View>("home");
+
+  useEffect(() => {
+    const t = window.setTimeout(() => setIntro(false), 1000);
+    return () => window.clearTimeout(t);
+  }, []);
   const [emails, setEmails] = useState<InvoiceEmail[]>(initialEmails);
   const [registered, setRegistered] =
     useState<InvoiceEmail[]>(seededRegistered);
@@ -90,6 +97,42 @@ export default function App() {
   return (
     <div className="min-h-screen">
       <DotBackground />
+
+      {/* ===== Intro splash: logo grande al centro, poi rimpicciolisce al suo posto ===== */}
+      <AnimatePresence>
+        {intro && (
+          <motion.div
+            key="intro-bg"
+            className="fixed inset-0 z-[90] bg-background"
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+          />
+        )}
+      </AnimatePresence>
+      {intro && (
+        <motion.div
+          layoutId="brand-logo"
+          className="fixed inset-0 z-[100] m-auto h-40 w-40"
+          transition={{ layout: { duration: 0.6, ease: "easeInOut" } }}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.6 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          >
+            <Logo className="h-full w-full" />
+          </motion.div>
+        </motion.div>
+      )}
+
+      <div className="fixed left-4 top-4 z-30 flex items-center gap-2">
+        <Logo className="h-8 w-8" />
+        <span className="text-lg font-semibold tracking-tight text-foreground">
+          {APP_NAME}
+        </span>
+      </div>
       <Header
         userName={USER_NAME}
         userEmail={USER_EMAIL}
@@ -111,7 +154,16 @@ export default function App() {
               transition={{ duration: 0.25 }}
             >
               {/* nome + descrizione */}
-              <div className="mt-10 text-center sm:mt-14">
+              <div className="mt-10 flex flex-col items-center text-center sm:mt-14">
+                {!intro && (
+                  <motion.div
+                    layoutId="brand-logo"
+                    className="mb-4"
+                    transition={{ layout: { duration: 0.6, ease: "easeInOut" } }}
+                  >
+                    <Logo className="h-14 w-14" />
+                  </motion.div>
+                )}
                 <h1 className="text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
                   {APP_NAME}
                 </h1>
