@@ -40,7 +40,7 @@ export function UploadZone({ onFiles }: Props) {
         "group flex cursor-pointer flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed bg-card px-6 py-12 text-center shadow-sm transition-colors sm:py-16",
         dragging
           ? "border-primary bg-accent"
-          : "border-border hover:border-primary/50 hover:bg-secondary/40"
+          : "border-border hover:border-primary/50 hover:bg-[hsl(210_28%_91%)]"
       )}
     >
       <input

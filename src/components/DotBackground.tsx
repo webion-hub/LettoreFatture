@@ -25,7 +25,7 @@ export function DotBackground() {
     const INFLUENCE = 110; // entro questa distanza il cursore attrae i punti
     const STRENGTH = 0.32; // quanto si avvicinano al cursore (0..1)
     const EASE = 0.12; // morbidezza del movimento (in entrata e in uscita)
-    const COLOR = "hsla(215, 30%, 17%, 0.16)"; // --foreground @ 16%
+    const COLOR = "hsla(215, 30%, 17%, 0.26)"; // --foreground @ 26%
 
     let dpr = Math.min(window.devicePixelRatio || 1, 2);
     let width = 0;
