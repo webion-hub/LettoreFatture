@@ -17,6 +17,7 @@ import { LoginPage } from "@/components/LoginPage";
 import { ProcessingOverlay } from "@/components/ProcessingOverlay";
 import { ExtractionPanel } from "@/components/ExtractionPanel";
 import { UploadZone } from "@/components/UploadZone";
+import { Landing } from "@/components/Landing";
 import { cn, formatCurrency, formatDate } from "@/lib/utils";
 
 type View = "home" | "gestionale";
@@ -25,7 +26,42 @@ const APP_NAME = "Quadra";
 const USER_NAME = "Mario Rossi";
 const USER_EMAIL = "mariorossi@gmail.com";
 
+const DEMO_HASH = "#/demo";
+
+/**
+ * Router minimale basato sull'hash: la landing è la home, il pulsante
+ * "Prova la demo" porta a #/demo, dove vive l'applicazione vera e propria.
+ * Usare l'hash mantiene funzionante il tasto "indietro" del browser.
+ */
 export default function App() {
+  const [isDemo, setIsDemo] = useState(
+    () => window.location.hash === DEMO_HASH
+  );
+
+  useEffect(() => {
+    const onHash = () => setIsDemo(window.location.hash === DEMO_HASH);
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
+
+  useEffect(() => {
+    // riporta la vista in cima quando si cambia sezione
+    window.scrollTo(0, 0);
+  }, [isDemo]);
+
+  if (!isDemo) {
+    return (
+      <Landing
+        onEnterDemo={() => {
+          window.location.hash = DEMO_HASH;
+        }}
+      />
+    );
+  }
+  return <Demo />;
+}
+
+function Demo() {
   const [authed, setAuthed] = useState(true);
   const [intro, setIntro] = useState(true);
   const [view, setView] = useState<View>("home");
@@ -127,12 +163,18 @@ export default function App() {
         </motion.div>
       )}
 
-      <div className="fixed left-4 top-4 z-30 flex items-center gap-2">
+      <button
+        onClick={() => {
+          window.location.hash = "#/";
+        }}
+        className="fixed left-4 top-4 z-30 flex items-center gap-2 rounded-lg transition-opacity hover:opacity-70"
+        aria-label="Torna alla home"
+      >
         <Logo className="h-8 w-8" />
         <span className="text-lg font-semibold tracking-tight text-foreground">
           {APP_NAME}
         </span>
-      </div>
+      </button>
       <Header
         userName={USER_NAME}
         userEmail={USER_EMAIL}
